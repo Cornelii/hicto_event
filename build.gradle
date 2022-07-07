@@ -1,0 +1,72 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.1'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id 'org.openapi.generator' version '5.3.0'
+	id "com.diffplug.eclipse.apt" version "3.26.0" // Only for Eclipse
+}
+
+group = 'com.sg9'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test'
+	
+	// OpenAPI and Swagger UI
+    // compileOnly 'javax.validation:validation-api:1.1.0.Final'
+    compileOnly 'jakarta.validation:jakarta.validation-api:2.0.2'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    
+    // mapstruct
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+    
+    
+    // Spring Actuator
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.4.0'
+    
+   
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+openApiGenerate {    
+    generatorName = "spring"
+    inputSpec = "$rootDir/design/api-spec.yaml".toString()
+    outputDir = "$rootDir".toString() 
+    apiPackage = "com.sg9.hicto.api"
+    invokerPackage = "com.sg9.hicto.api.invoker"
+    modelPackage = "com.sg9.hicto.api.model"
+    configOptions = [
+        dateLibrary: "java8",
+        java8: "false",
+        generateSupportingFiles: "false",
+        hideGenerationTimestamp: "true",
+        useTags: "true",
+        interfaceOnly: "true",
+        openApiNullable: "false"
+  ]
+}
